@@ -1,5 +1,4 @@
 var view = {
-    //this method takes a string message and displays it in the message display area
     displayMessage: function (msg) {
         var messageArea = document.getElementById("messageArea");
         messageArea.innerHTML = msg;
@@ -15,7 +14,7 @@ var view = {
 }
 
 var model = {
-    boardSize: 7,
+    boardSize: getBoardSize(),
     numShips: 3,
     shipLength: 3,
     shipsSunk: 0,
@@ -60,6 +59,12 @@ var controller = {
     }
 }
 
+function getBoardSize() {
+    var boardTable = document.getElementById("boardTable")
+    var boardSize = boardTable.rows.length;
+    return boardSize;
+}
+
 function parseGuess(guess) {
     var alphabet = ["A", "B", "C", "D", "E", "F", "G"];
 
@@ -74,7 +79,7 @@ function parseGuess(guess) {
         if (isNaN(row) || isNaN(column)) {
             alert("Oops, this isn't on the board.");
         }
-        else if (row < 0 || row > model.boardSize || column < 0 || column > model.boardSize) {
+        else if (row < 0 || row >= model.boardSize || column < 0 || column >= model.boardSize) {
             alert("Oops, that's off the board.");
         }
         else {
@@ -122,11 +127,12 @@ function placeShips() {
             model.ships[i].locations = getShipLocation();
             currentShipLocations = model.ships[i].locations;
         }
-        else {
-            var proposedShipLocation = getShipLocation();
-            while (isShipOverlapping(proposedShipLocation, currentShipLocations)) {
+        else {            
+            var proposedShipLocation;
+            do {
                 proposedShipLocation = getShipLocation();
             }
+            while (isShipOverlapping(proposedShipLocation, currentShipLocations))
             model.ships[i].locations = proposedShipLocation;
             currentShipLocations = currentShipLocations.concat(proposedShipLocation);
         }
